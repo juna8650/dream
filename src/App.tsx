@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { RotateCcw } from 'lucide-react';
 import { ExamplesGallery } from './components/ExamplesGallery';
 import { Header } from './components/Header';
 import { MentimeterModal } from './components/MentimeterModal';
@@ -8,7 +7,6 @@ import { Stage2FutureImagine } from './components/Stage2FutureImagine';
 import { Stage3CharacterDesign } from './components/Stage3CharacterDesign';
 import { Stage4ProfileCard } from './components/Stage4ProfileCard';
 import { StageStepper } from './components/StageStepper';
-import { ToolkitModal } from './components/ToolkitModal';
 import {
   INITIAL_WORKSPACE_STATE,
   PROFILE_CARD_EXAMPLES,
@@ -38,7 +36,6 @@ export default function App() {
   const [selectedExampleId, setSelectedExampleId] = useState<string>(
     PROFILE_CARD_EXAMPLES[0].id
   );
-  const [toolkitOpen, setToolkitOpen] = useState(false);
   const [mentimeterOpen, setMentimeterOpen] = useState(false);
 
   useEffect(() => {
@@ -85,15 +82,6 @@ export default function App() {
       colorTheme: ex.colorTheme,
     });
     handleSelectTab('stage4');
-  };
-
-  const handleResetWorkspace = () => {
-    setWorkspace(INITIAL_WORKSPACE_STATE);
-    try {
-      window.localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      // ignore
-    }
   };
 
   return (
@@ -153,35 +141,13 @@ export default function App() {
       </main>
 
       <footer className="border-t border-slate-200 bg-white mt-12">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-5 flex items-center justify-center sm:justify-start text-xs text-slate-500">
           <p>
             AI와 함께 만드는 나의 미래 · 중학생 진로 탐색 수업용 프롬프트 생성기
           </p>
-          <div className="flex items-center gap-4">
-            <button
-              type="button"
-              onClick={() => setToolkitOpen(true)}
-              className="hover:text-slate-900 transition-colors"
-            >
-              수업 자료 및 공용 계정
-            </button>
-            <span aria-hidden="true" className="text-slate-300">|</span>
-            <button
-              type="button"
-              onClick={handleResetWorkspace}
-              className="inline-flex items-center gap-1 hover:text-slate-900 transition-colors"
-            >
-              <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>입력 내용 초기화</span>
-            </button>
-          </div>
         </div>
       </footer>
 
-      <ToolkitModal
-        isOpen={toolkitOpen}
-        onClose={() => setToolkitOpen(false)}
-      />
       <MentimeterModal
         isOpen={mentimeterOpen}
         onClose={() => setMentimeterOpen(false)}
