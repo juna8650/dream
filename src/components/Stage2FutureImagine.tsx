@@ -169,7 +169,7 @@ export function Stage2FutureImagine({
 
       {/* Main 2-Zone Sandbox */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        <div className="lg:col-span-7 bg-white border border-rose-200/80 rounded-2xl p-5 sm:p-6 space-y-6 shadow-xs">
+        <div className="lg:col-span-7 bg-white border-2 border-rose-300 rounded-2xl p-5 sm:p-6 space-y-6 shadow-sm">
           <div className="flex items-start gap-3 pb-3 border-b border-rose-100">
             <div className="w-10 h-10 rounded-xl bg-rose-100 border border-rose-200 text-rose-600 flex items-center justify-center shrink-0 mt-0.5">
               <ImageIcon className="w-5 h-5" aria-hidden="true" />
@@ -222,7 +222,7 @@ export function Stage2FutureImagine({
                 });
               }}
               placeholder="1단계에서 입력하면 자동으로 채워집니다"
-              className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
+              className="w-full px-3.5 py-2.5 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
             />
           </div>
 
@@ -282,7 +282,7 @@ export function Stage2FutureImagine({
                 value={state.chosenJob}
                 onChange={(e) => onUpdate({ chosenJob: e.target.value })}
                 placeholder="원하는 미래 직업을 입력하세요 (예: 로봇 공학자)"
-                className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600"
+                className="w-full px-3.5 py-2.5 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
               />
             )}
           </div>
@@ -333,7 +333,7 @@ export function Stage2FutureImagine({
               type="text"
               value={state.workplace}
               onChange={(e) => onUpdate({ workplace: e.target.value })}
-              className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600"
+              className="w-full px-3.5 py-2.5 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
             />
             <div className="flex flex-wrap gap-1.5">
               {PLACE_SUGGESTIONS.map((p) => (
@@ -376,7 +376,7 @@ export function Stage2FutureImagine({
               type="text"
               value={state.workAction}
               onChange={(e) => onUpdate({ workAction: e.target.value })}
-              className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600"
+              className="w-full px-3.5 py-2.5 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
             />
             {showActionSuggestions && (
               <div className="flex flex-wrap gap-1.5">
@@ -459,7 +459,7 @@ export function Stage2FutureImagine({
                 value={state.mood}
                 onChange={(e) => onUpdate({ mood: e.target.value })}
                 placeholder="원하는 분위기를 입력하세요"
-                className="w-full px-3.5 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                className="w-full px-3.5 py-2 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
               />
             )}
           </div>

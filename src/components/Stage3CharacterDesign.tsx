@@ -83,7 +83,7 @@ export function Stage3CharacterDesign({
               캐릭터 제작 방식을 선택하세요
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              AI가 하나씩 질문해주는 ‘선택형 코치 모드’ 또는 바로 이미지를 그리는 ‘직접 작성 모드’를 고를 수 있습니다.
+              AI가 하나씩 질문해주는 ‘선택형 모드’ 또는 바로 이미지를 그리는 ‘직접 작성 모드’를 고를 수 있습니다.
             </p>
           </div>
         </div>
@@ -98,7 +98,7 @@ export function Stage3CharacterDesign({
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            선택형 코치 프롬프트 (추천)
+            선택형 프롬프트 (추천)
           </button>
           <button
             type="button"
@@ -116,7 +116,7 @@ export function Stage3CharacterDesign({
 
       {/* Main 2-Zone Sandbox */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        <div className="lg:col-span-7 bg-white border border-violet-200/80 rounded-2xl p-5 sm:p-6 space-y-6 shadow-xs">
+        <div className="lg:col-span-7 bg-white border-2 border-violet-300 rounded-2xl p-5 sm:p-6 space-y-6 shadow-sm">
           {state.stage3Mode === 'coach' ? (
             <>
               <div className="flex items-start gap-3 pb-3 border-b border-violet-100">
@@ -125,10 +125,10 @@ export function Stage3CharacterDesign({
                 </div>
                 <div>
                   <span className="text-xs font-semibold text-violet-700 block mb-0.5">
-                    작성 영역 · 코치 프롬프트 설정
+                    작성 영역 · 선택형 프롬프트 설정
                   </span>
                   <h2 className="text-lg font-bold text-slate-900">
-                    AI 디자인 코치 선택형 프롬프트 설정
+                    AI 디자인 선택형 프롬프트 설정
                   </h2>
                   <p className="text-sm text-slate-500 mt-0.5">
                     프롬프트를 복사해 ChatGPT에 붙여넣으면, AI가 1~5번 선택지를 주며 단계별로 캐릭터를 함께 만들어 줍니다.
@@ -157,7 +157,7 @@ export function Stage3CharacterDesign({
                     value={keywordsInput}
                     onChange={(e) => handleKeywordsChange(e.target.value)}
                     placeholder="1·2단계에서 입력하면 자동으로 채워집니다"
-                    className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                    className="w-full px-3.5 py-2.5 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
                   />
                 </div>
                 <div>
@@ -180,7 +180,7 @@ export function Stage3CharacterDesign({
                     value={state.chosenJob}
                     onChange={(e) => onUpdate({ chosenJob: e.target.value })}
                     placeholder="1·2단계에서 입력하면 자동으로 채워집니다"
-                    className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                    className="w-full px-3.5 py-2.5 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
                   />
                 </div>
               </div>
@@ -260,7 +260,7 @@ export function Stage3CharacterDesign({
                     value={state.chosenJob}
                     onChange={(e) => onUpdate({ chosenJob: e.target.value })}
                     placeholder="1·2단계에서 입력하면 자동으로 채워집니다"
-                    className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                    className="w-full px-3.5 py-2.5 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
                   />
                 </div>
                 <div>
@@ -269,7 +269,7 @@ export function Stage3CharacterDesign({
                       htmlFor="stage3-dir-kw"
                       className="block text-sm font-semibold text-slate-800"
                     >
-                      상징 키워드 3가지
+                      핵심 키워드 3가지
                     </label>
                     <span className="text-xs font-medium text-violet-700">
                       {joinedStateKeywords
@@ -283,7 +283,7 @@ export function Stage3CharacterDesign({
                     value={keywordsInput}
                     onChange={(e) => handleKeywordsChange(e.target.value)}
                     placeholder="1·2단계에서 입력하면 자동으로 채워집니다"
-                    className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                    className="w-full px-3.5 py-2.5 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
                   />
                 </div>
               </div>
@@ -343,7 +343,7 @@ export function Stage3CharacterDesign({
                     value={state.charProps}
                     onChange={(e) => onUpdate({ charProps: e.target.value })}
                     placeholder="예: 노트북, 게임 컨트롤러, 픽셀 캐릭터, 모니터"
-                    className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                    className="w-full px-3.5 py-2.5 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
                   />
                 </div>
                 <div>
@@ -359,7 +359,7 @@ export function Stage3CharacterDesign({
                     value={state.charAction}
                     onChange={(e) => onUpdate({ charAction: e.target.value })}
                     placeholder="예: 게임을 개발하는 모습"
-                    className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                    className="w-full px-3.5 py-2.5 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
                   />
                 </div>
               </div>
@@ -427,7 +427,7 @@ export function Stage3CharacterDesign({
           <PromptPreviewPanel
             title={
               state.stage3Mode === 'coach'
-                ? '완성된 3단계 선택형 코치 프롬프트'
+                ? '완성된 3단계 선택형 프롬프트'
                 : '완성된 3단계 직접 작성 프롬프트'
             }
             subtitle={

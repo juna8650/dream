@@ -91,7 +91,7 @@ export default function App() {
         onOpenMentimeter={() => setMentimeterOpen(true)}
       />
 
-      <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <StageStepper
           activeTab={activeTab}
           onSelectTab={handleSelectTab}
@@ -141,7 +141,7 @@ export default function App() {
       </main>
 
       <footer className="border-t border-slate-200 bg-white mt-12">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-5 flex items-center justify-center sm:justify-start text-xs text-slate-500">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-5 flex items-center justify-center sm:justify-start text-xs text-slate-500">
           <p>
             AI와 함께 만드는 나의 미래 · 중학생 진로 탐색 수업용 프롬프트 생성기
           </p>

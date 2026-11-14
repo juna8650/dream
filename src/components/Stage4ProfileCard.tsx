@@ -105,7 +105,7 @@ export function Stage4ProfileCard({
               key={ex.id}
               type="button"
               onClick={() => applyExample(ex)}
-              className="px-2 py-1.5 text-[11px] font-medium bg-amber-50/65 border border-amber-200/80 rounded-md text-slate-700 hover:bg-amber-500 hover:border-amber-500 hover:text-slate-950 transition-colors whitespace-nowrap shrink-0"
+              className="px-2 py-1.5 text-[12px] font-medium bg-amber-50/65 border border-amber-200/80 rounded-md text-slate-700 hover:bg-amber-500 hover:border-amber-500 hover:text-slate-950 transition-colors whitespace-nowrap shrink-0"
             >
               {ex.number}. {ex.jobTitle}
             </button>
@@ -115,7 +115,7 @@ export function Stage4ProfileCard({
 
       {/* Main 2-Zone Sandbox */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        <div className="lg:col-span-7 bg-white border border-amber-200/90 rounded-2xl p-5 sm:p-6 space-y-6 shadow-xs">
+        <div className="lg:col-span-7 bg-white border-2 border-amber-300 rounded-2xl p-5 sm:p-6 space-y-6 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-amber-100">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-amber-100 border border-amber-200 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
@@ -160,7 +160,7 @@ export function Stage4ProfileCard({
                   value={state.studentName}
                   onChange={(e) => onUpdate({ studentName: e.target.value })}
                   placeholder="예: 김하늘"
-                  className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                  className="w-full px-3.5 py-2 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
                 />
               </div>
               <div>
@@ -176,7 +176,7 @@ export function Stage4ProfileCard({
                   value={state.chosenJob}
                   onChange={(e) => onUpdate({ chosenJob: e.target.value })}
                   placeholder="예: 게임 개발자"
-                  className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                  className="w-full px-3.5 py-2 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
                 />
               </div>
               <div>
@@ -192,7 +192,7 @@ export function Stage4ProfileCard({
                   value={state.studentAge}
                   onChange={(e) => onUpdate({ studentAge: e.target.value })}
                   placeholder="예: 15세"
-                  className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                  className="w-full px-3.5 py-2 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
                 />
               </div>
               <div>
@@ -208,7 +208,7 @@ export function Stage4ProfileCard({
                   value={state.mbti}
                   onChange={(e) => onUpdate({ mbti: e.target.value })}
                   placeholder="예: ENTP"
-                  className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                  className="w-full px-3.5 py-2 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
                 />
               </div>
             </div>
@@ -225,7 +225,7 @@ export function Stage4ProfileCard({
                 value={state.motto}
                 onChange={(e) => onUpdate({ motto: e.target.value })}
                 placeholder="예: 모든 일에 최선을 다하자!"
-                className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                className="w-full px-3.5 py-2 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
               />
             </div>
           </div>
@@ -246,7 +246,7 @@ export function Stage4ProfileCard({
                 value={state.profileKeywords}
                 onChange={(e) => onUpdate({ profileKeywords: e.target.value })}
                 placeholder="예: 창의력, 문제해결력, 협동심, 끈기"
-                className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                className="w-full px-3.5 py-2 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
               />
             </div>
             <div>
@@ -262,7 +262,7 @@ export function Stage4ProfileCard({
                 value={state.likes}
                 onChange={(e) => onUpdate({ likes: e.target.value })}
                 placeholder="예: 게임하기, 영화감상, 캐릭터 디자인, 웹툰 보기"
-                className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                className="w-full px-3.5 py-2 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
               />
             </div>
           </div>
@@ -279,7 +279,7 @@ export function Stage4ProfileCard({
                   value={state.strengths[idx]}
                   onChange={(e) => updateArrayItem('strengths', idx, e.target.value)}
                   placeholder={`강점 ${idx + 1}`}
-                  className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                  className="w-full px-3.5 py-2 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
                 />
               ))}
             </div>
@@ -318,7 +318,7 @@ export function Stage4ProfileCard({
                 value={state.aiViewCustom}
                 onChange={(e) => onUpdate({ aiViewCustom: e.target.value })}
                 placeholder="예: 끊임없이 도전하며 사람들에게 즐거움을 전하는 멋진 개발자가 될 가능성이 높아요!"
-                className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                className="w-full px-3.5 py-2 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
               />
             )}
           </div>
@@ -340,7 +340,7 @@ export function Stage4ProfileCard({
                   value={state.goals[idx]}
                   onChange={(e) => updateArrayItem('goals', idx, e.target.value)}
                   placeholder={`미래 목표 ${idx + 1}`}
-                  className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                  className="w-full px-3.5 py-2 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
                 />
               ))}
             </div>
@@ -357,7 +357,7 @@ export function Stage4ProfileCard({
                 value={state.pledge}
                 onChange={(e) => onUpdate({ pledge: e.target.value })}
                 placeholder="예: 매일 배우고 도전하면서 멋진 전문가가 되겠습니다."
-                className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                className="w-full px-3.5 py-2 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
               />
             </div>
             <div>
@@ -373,7 +373,7 @@ export function Stage4ProfileCard({
                 value={state.messageToFuture}
                 onChange={(e) => onUpdate({ messageToFuture: e.target.value })}
                 placeholder="예: 오늘의 작은 노력이 미래의 멋진 나를 만들어 줄 거야!"
-                className="w-full px-3.5 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-blue-600"
+                className="w-full px-3.5 py-2 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
               />
             </div>
           </div>

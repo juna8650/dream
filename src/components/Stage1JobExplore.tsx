@@ -183,7 +183,7 @@ export function Stage1JobExplore({
       {/* Main 2-Zone Sandbox */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Zone: Writing Area (Crisp White + Multi-tone Pastel Accents) */}
-        <div className="lg:col-span-7 bg-white border border-sky-200/90 rounded-2xl p-5 sm:p-6 space-y-6 shadow-xs">
+        <div className="lg:col-span-7 bg-white border-2 border-sky-300 rounded-2xl p-5 sm:p-6 space-y-6 shadow-sm">
           <div className="flex items-start gap-3 pb-4 border-b border-sky-100">
             <div className="w-10 h-10 rounded-xl bg-sky-100 border border-sky-200 text-sky-700 flex items-center justify-center shrink-0 mt-0.5">
               <Compass className="w-5 h-5" aria-hidden="true" />
@@ -212,22 +212,22 @@ export function Stage1JobExplore({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {([0, 1, 2] as const).map((idx) => {
                 const cardStyles = [
-                  'bg-sky-50/75 border-sky-200 focus-within:border-sky-500 focus-within:ring-sky-500/15',
-                  'bg-rose-50/75 border-rose-200 focus-within:border-rose-400 focus-within:ring-rose-400/15',
-                  'bg-amber-50/75 border-amber-200 focus-within:border-amber-500 focus-within:ring-amber-500/15',
+                  'bg-sky-50/75 border-sky-300 focus-within:border-sky-600 focus-within:ring-sky-500/15',
+                  'bg-rose-50/75 border-rose-300 focus-within:border-rose-500 focus-within:ring-rose-400/15',
+                  'bg-amber-50/75 border-amber-300 focus-within:border-amber-500 focus-within:ring-amber-500/15',
                 ][idx];
                 const labelStyles = ['text-sky-800', 'text-rose-800', 'text-amber-800'][idx];
                 const numStyles = ['text-sky-500', 'text-rose-500', 'text-amber-600'][idx];
                 const inputBorder = [
-                  'border-sky-200/90 focus:border-sky-500',
-                  'border-rose-200/90 focus:border-rose-400',
-                  'border-amber-200/90 focus:border-amber-500',
+                  'border-sky-300 focus:border-sky-600',
+                  'border-rose-300 focus:border-rose-500',
+                  'border-amber-300 focus:border-amber-500',
                 ][idx];
 
                 return (
                   <div
                     key={idx}
-                    className={`border rounded-xl p-3 focus-within:bg-white focus-within:ring-2 transition-all ${cardStyles}`}
+                    className={`border-[1.5px] rounded-xl p-3 focus-within:bg-white focus-within:ring-2 transition-all ${cardStyles}`}
                   >
                     <label
                       htmlFor={`stage1-kw-${idx}`}
@@ -250,7 +250,7 @@ export function Stage1JobExplore({
                             ? '예: 그림 그리기'
                             : '예: 창의성'
                       }
-                      className={`w-full px-2.5 py-2 text-sm font-medium bg-white border rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none ${inputBorder}`}
+                      className={`w-full px-2.5 py-2 text-sm font-medium bg-white border-[1.5px] rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none ${inputBorder}`}
                     />
                   </div>
                 );
@@ -279,7 +279,7 @@ export function Stage1JobExplore({
                     className={`px-3 py-2.5 text-xs font-medium rounded-lg border text-left transition-colors flex items-center justify-between gap-2 ${
                       active
                         ? 'bg-sky-600 border-sky-600 text-white font-semibold shadow-xs'
-                        : 'bg-sky-50/35 border-slate-200 text-slate-700 hover:bg-sky-50 hover:border-sky-300'
+                        : 'bg-sky-50/35 border-slate-300 text-slate-700 hover:bg-sky-50 hover:border-sky-400'
                     }`}
                   >
                     <span className="truncate">{field}</span>
@@ -304,7 +304,7 @@ export function Stage1JobExplore({
               value={state.chosenJob}
               onChange={(e) => onUpdate({ chosenJob: e.target.value })}
               placeholder="예: 게임 개발자, 수의사, 웹툰 작가"
-              className="w-full px-3.5 py-2.5 text-sm bg-sky-50/40 border border-sky-200 rounded-lg text-slate-900 focus:bg-white focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/15"
+              className="w-full px-3.5 py-2.5 text-sm bg-white border-[1.5px] border-sky-300 rounded-lg text-slate-900 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-500/15"
             />
             <div className="flex flex-wrap gap-1.5">
               {JOB_PRESETS.slice(0, 6).map((preset) => (
@@ -319,7 +319,7 @@ export function Stage1JobExplore({
                   className={`px-2.5 py-1 text-xs rounded-md border transition-colors ${
                     state.chosenJob === preset.job
                       ? 'bg-sky-600 border-sky-600 text-white font-medium'
-                      : 'bg-sky-50/40 border-slate-200 text-slate-700 hover:bg-sky-100/60'
+                      : 'bg-sky-50/40 border-slate-300 text-slate-700 hover:bg-sky-100/60'
                   }`}
                 >
                   {preset.job}
