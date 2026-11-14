@@ -1,0 +1,6 @@
+{
+  "name": "AI와 함께 만드는 나의 미래",
+  "description": "중학생을 위한 진로 탐색·AI 캐릭터·미래 프로필 카드 단계별 프롬프트 생성기 및 예시 자료실",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
