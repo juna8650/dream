@@ -7,7 +7,6 @@ import {
   Download,
   Image as ImageIcon,
   Loader2,
-  Sparkles,
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { LESSON_ASSETS, PROFILE_CARD_EXAMPLES } from '../data/curriculum';
@@ -19,13 +18,11 @@ import { renderPosterImageFromPdf } from '../utils/pdfPosterExtractor';
 interface ExamplesGalleryProps {
   selectedExampleId: string;
   onSelectExampleId: (id: string) => void;
-  onApplyToStage4: (example: ProfileCardExample) => void;
 }
 
 export function ExamplesGallery({
   selectedExampleId,
   onSelectExampleId,
-  onApplyToStage4,
 }: ExamplesGalleryProps) {
   const { lang } = useLanguage();
   const activeExample =
@@ -164,38 +161,17 @@ export function ExamplesGallery({
           </div>
 
           <div className="pt-4 border-t border-slate-100 space-y-3">
-            <div className="flex items-center justify-between gap-2">
-              <div>
-                <h3 className="text-base font-bold text-slate-900">
-                  {lang === 'en'
-                    ? `${activeExample.number}. ${activeJobTitle} Sample Prompt`
-                    : `${activeExample.number}. ${activeJobTitle} 예시 프롬프트`}
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  {lang === 'en'
-                    ? `PDF p.${activeExample.pdfPromptPage} Prompt · p.${activeExample.pdfPosterPage} Poster`
-                    : `PDF ${activeExample.pdfPromptPage}쪽 프롬프트 · ${activeExample.pdfPosterPage}쪽 완성 포스터`}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleCopyPrompt(activeExample.id, activePrompt)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 rounded-md hover:bg-slate-200 shrink-0 whitespace-nowrap"
-              >
-                {copiedId === activeExample.id ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
-                    <span className="text-emerald-700">
-                      {lang === 'en' ? 'Copied' : '복사됨'}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5" aria-hidden="true" />
-                    <span>{lang === 'en' ? 'Copy Prompt' : '프롬프트 복사'}</span>
-                  </>
-                )}
-              </button>
+            <div>
+              <h3 className="text-base font-bold text-slate-900">
+                {lang === 'en'
+                  ? `${activeExample.number}. ${activeJobTitle} Sample Prompt`
+                  : `${activeExample.number}. ${activeJobTitle} 예시 프롬프트`}
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {lang === 'en'
+                  ? `PDF p.${activeExample.pdfPromptPage} Prompt · p.${activeExample.pdfPosterPage} Poster`
+                  : `PDF ${activeExample.pdfPromptPage}쪽 프롬프트 · ${activeExample.pdfPosterPage}쪽 완성 포스터`}
+              </p>
             </div>
 
             <div className="bg-slate-50 border border-slate-200 rounded-lg p-3.5 max-h-[300px] overflow-y-auto">
@@ -206,15 +182,24 @@ export function ExamplesGallery({
 
             <button
               type="button"
-              onClick={() => onApplyToStage4(activeExample)}
-              className="w-full py-2.5 px-4 text-sm font-semibold text-white bg-teal-600 rounded-lg hover:bg-teal-700 transition-colors flex items-center justify-center gap-2"
+              onClick={() => handleCopyPrompt(activeExample.id, activePrompt)}
+              className={`w-full py-2.5 px-4 text-sm font-semibold text-white rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                copiedId === activeExample.id
+                  ? 'bg-emerald-600 hover:bg-emerald-700'
+                  : 'bg-teal-600 hover:bg-teal-700'
+              }`}
             >
-              <Sparkles className="w-4 h-4" aria-hidden="true" />
-              <span>
-                {lang === 'en'
-                  ? 'Fill Step 4 Generator with This Example'
-                  : '이 예시를 4단계 프롬프트 생성기에 채우기'}
-              </span>
+              {copiedId === activeExample.id ? (
+                <>
+                  <Check className="w-4 h-4" aria-hidden="true" />
+                  <span>{lang === 'en' ? 'Copied!' : '복사 완료!'}</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" aria-hidden="true" />
+                  <span>{lang === 'en' ? 'Copy Prompt' : '프롬프트 복사'}</span>
+                </>
+              )}
             </button>
           </div>
         </div>

@@ -13,10 +13,8 @@ import {
   INITIAL_WORKSPACE_STATE,
   PROFILE_CARD_EXAMPLES,
 } from './data/curriculum';
-import { PROFILE_CARD_EXAMPLES_EN } from './i18n/translations';
 import {
   ActiveTab,
-  ProfileCardExample,
   StudentWorkspaceState,
 } from './types/lesson';
 
@@ -73,34 +71,6 @@ function InnerApp() {
     handleSelectTab('examples');
   };
 
-  const handleApplyExampleToStage4 = (ex: ProfileCardExample) => {
-    const enEx = lang === 'en' ? PROFILE_CARD_EXAMPLES_EN[ex.id] : undefined;
-    const source = enEx ?? ex;
-    handleUpdateWorkspace({
-      studentName: source.studentName,
-      chosenJob: source.jobTitle,
-      studentAge: source.age,
-      mbti: ex.mbti,
-      motto: source.motto,
-      profileKeywords: source.keywords.join(', '),
-      likes: source.likes.join(', '),
-      strengths: [
-        source.strengths[0] ?? '',
-        source.strengths[1] ?? '',
-        source.strengths[2] ?? '',
-      ],
-      goals: [
-        source.goals[0] ?? '',
-        source.goals[1] ?? '',
-        source.goals[2] ?? '',
-      ],
-      pledge: source.pledge,
-      messageToFuture: source.messageToFuture,
-      colorTheme: ex.colorTheme,
-    });
-    handleSelectTab('stage4');
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#EEF6FF] via-[#FDF4F8] to-[#F2F7FF] text-slate-900">
       <Header
@@ -152,7 +122,6 @@ function InnerApp() {
           <ExamplesGallery
             selectedExampleId={selectedExampleId}
             onSelectExampleId={setSelectedExampleId}
-            onApplyToStage4={handleApplyExampleToStage4}
           />
         )}
       </main>
