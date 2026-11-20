@@ -8,11 +8,22 @@ import {
   Sparkles,
   Wand2,
 } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 import {
   JOB_PRESETS,
   STAGE2_MOODS,
   STAGE2_STYLES,
 } from '../data/curriculum';
+import {
+  ASPECT_RATIO_EN,
+  GENDER_EN,
+  JOB_PRESETS_EN,
+  PLACE_SUGGESTIONS_EN,
+  STAGE2_MOOD_EN,
+  STAGE2_STYLE_EN,
+  translateKnownText,
+  translateValue,
+} from '../i18n/translations';
 import { GenderOption, StudentWorkspaceState } from '../types/lesson';
 import { copyTextToClipboard } from '../utils/clipboard';
 import { getJobRecommendations } from '../utils/jobRecommendations';
@@ -42,6 +53,7 @@ export function Stage2FutureImagine({
   onUpdate,
   onNextStage,
 }: Stage2FutureImagineProps) {
+  const { lang } = useLanguage();
   const [customJobMode, setCustomJobMode] = useState(true);
   const [customMoodMode, setCustomMoodMode] = useState(
     state.mood.trim().length > 0 && !STAGE2_MOODS.includes(state.mood)
@@ -51,27 +63,39 @@ export function Stage2FutureImagine({
   const [actionRecIndex, setActionRecIndex] = useState(0);
   const [showActionSuggestions, setShowActionSuggestions] = useState(false);
   const [keywordsInput, setKeywordsInput] = useState(() =>
-    state.keywords.filter((k) => k.trim()).join(', ')
+    state.keywords
+      .map((k) => translateKnownText(k, lang).trim())
+      .filter(Boolean)
+      .join(', ')
   );
 
   const joinedStateKeywords = state.keywords.filter((k) => k.trim()).join(', ');
   const prevJoinedRef = useRef(joinedStateKeywords);
+  const prevLangRef = useRef(lang);
   useEffect(() => {
-    if (prevJoinedRef.current !== joinedStateKeywords) {
+    if (prevJoinedRef.current !== joinedStateKeywords || prevLangRef.current !== lang) {
       prevJoinedRef.current = joinedStateKeywords;
-      setKeywordsInput(joinedStateKeywords);
+      prevLangRef.current = lang;
+      setKeywordsInput(
+        state.keywords
+          .map((k) => translateKnownText(k, lang).trim())
+          .filter(Boolean)
+          .join(', ')
+      );
     }
-  }, [joinedStateKeywords]);
+  }, [joinedStateKeywords, lang, state.keywords]);
 
   useEffect(() => {
     setShowActionSuggestions(false);
     setPlaceRecIndex(0);
     setActionRecIndex(0);
-  }, [state.chosenJob]);
+  }, [state.chosenJob, lang]);
 
-  const promptText = buildStage2Prompt(state);
-  const jobLabel = state.chosenJob.trim() || '미래 직업';
-  const jobRecommendations = getJobRecommendations(state.chosenJob);
+  const promptText = buildStage2Prompt(state, lang);
+  const jobLabel =
+    translateKnownText(state.chosenJob, lang).trim() ||
+    (lang === 'en' ? 'Future Career' : '미래 직업');
+  const jobRecommendations = getJobRecommendations(state.chosenJob, lang);
 
   const handleRecommendWorkplace = () => {
     const list = jobRecommendations.workplaces;
@@ -96,35 +120,61 @@ export function Stage2FutureImagine({
 
   const handleSelectPresetJob = (preset: (typeof JOB_PRESETS)[number]) => {
     setCustomJobMode(false);
+    const displayJob =
+      lang === 'en' ? (JOB_PRESETS_EN[preset.job]?.job ?? preset.job) : preset.job;
     onUpdate({
-      chosenJob: preset.job,
+      chosenJob: displayJob,
       workplace: '',
       workAction: '',
     });
   };
 
-  const fixSuggestions = [
-    {
-      id: 'bg',
-      label: '배경 바꾸기',
-      text: '배경을 더 밝은 분위기의 작업실로 바꿔줘.',
-    },
-    {
-      id: 'face',
-      label: '표정 바꾸기',
-      text: '인물의 표정을 더 자신감 있고 밝게 바꿔줘.',
-    },
-    {
-      id: 'props',
-      label: '소품 추가하기',
-      text: '손에 태블릿과 펜을 들고 있는 모습으로 바꿔줘.',
-    },
-    {
-      id: 'style',
-      label: '스타일 바꾸기',
-      text: '3D 애니메이션 스타일 대신 웹툰 스타일로 바꿔줘.',
-    },
-  ];
+  const fixSuggestions =
+    lang === 'en'
+      ? [
+          {
+            id: 'bg',
+            label: 'Change Background',
+            text: 'Change the background to a brighter, more inviting creative studio.',
+          },
+          {
+            id: 'face',
+            label: 'Change Expression',
+            text: 'Make the character’s facial expression brighter and more confident.',
+          },
+          {
+            id: 'props',
+            label: 'Add Props',
+            text: 'Update the pose so they are holding a tablet and stylus.',
+          },
+          {
+            id: 'style',
+            label: 'Change Style',
+            text: 'Use a webtoon illustration style instead of 3D animation style.',
+          },
+        ]
+      : [
+          {
+            id: 'bg',
+            label: '배경 바꾸기',
+            text: '배경을 더 밝은 분위기의 작업실로 바꿔줘.',
+          },
+          {
+            id: 'face',
+            label: '표정 바꾸기',
+            text: '인물의 표정을 더 자신감 있고 밝게 바꿔줘.',
+          },
+          {
+            id: 'props',
+            label: '소품 추가하기',
+            text: '손에 태블릿과 펜을 들고 있는 모습으로 바꿔줘.',
+          },
+          {
+            id: 'style',
+            label: '스타일 바꾸기',
+            text: '3D 애니메이션 스타일 대신 웹툰 스타일로 바꿔줘.',
+          },
+        ];
 
   const handleCopyFix = async (id: string, text: string) => {
     const ok = await copyTextToClipboard(text);
@@ -144,25 +194,29 @@ export function Stage2FutureImagine({
           </div>
           <div>
             <span className="text-xs font-semibold text-rose-600">
-              2단계 · Canva · ChatGPT 활용 · 가로/세로 이미지 생성
+              {lang === 'en'
+                ? 'Step 2 · Canva · ChatGPT · Generate Portrait / Landscape Images'
+                : '2단계 · Canva · ChatGPT 활용 · 가로/세로 이미지 생성'}
             </span>
             <h2 className="text-base font-bold text-slate-900 mt-0.5">
-              이미지 프롬프트 작성 공식
+              {lang === 'en'
+                ? 'Image Prompt Formula'
+                : '이미지 프롬프트 작성 공식'}
             </h2>
           </div>
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-2 text-xs sm:text-sm font-medium text-slate-800 bg-rose-50/70 border border-rose-200/80 rounded-xl px-4 py-2.5">
-          <span>핵심 키워드</span>
+          <span>{lang === 'en' ? 'Core Keywords' : '핵심 키워드'}</span>
           <span className="text-rose-400">+</span>
-          <span>미래 직업</span>
+          <span>{lang === 'en' ? 'Future Career' : '미래 직업'}</span>
           <span className="text-rose-400">+</span>
-          <span>장소</span>
+          <span>{lang === 'en' ? 'Workplace' : '장소'}</span>
           <span className="text-rose-400">+</span>
-          <span>하는 일</span>
+          <span>{lang === 'en' ? 'Action' : '하는 일'}</span>
           <span className="text-rose-400">+</span>
-          <span>분위기</span>
+          <span>{lang === 'en' ? 'Mood' : '분위기'}</span>
           <span className="text-rose-400">+</span>
-          <span>이미지 스타일</span>
+          <span>{lang === 'en' ? 'Image Style' : '이미지 스타일'}</span>
         </div>
       </div>
 
@@ -175,13 +229,19 @@ export function Stage2FutureImagine({
             </div>
             <div>
               <span className="text-xs font-semibold text-rose-600 block mb-0.5">
-                작성 영역 · 장면과 스타일 선택
+                {lang === 'en'
+                  ? 'Input Area · Choose Scene & Style'
+                  : '작성 영역 · 장면과 스타일 선택'}
               </span>
               <h2 className="text-lg font-bold text-slate-900">
-                20년 후 ‘미래의 나’ 이미지 만들기
+                {lang === 'en'
+                  ? 'Create an Image of “Future Me” 20 Years Later'
+                  : '20년 후 ‘미래의 나’ 이미지 만들기'}
               </h2>
               <p className="text-sm text-slate-500 mt-0.5">
-                각 항목을 선택하거나 직접 입력하면 오른쪽 완성된 프롬프트가 실시간으로 바뀝니다.
+                {lang === 'en'
+                  ? 'Pick or type each detail below to update the completed prompt on the right in real time.'
+                  : '각 항목을 선택하거나 직접 입력하면 오른쪽 완성된 프롬프트가 실시간으로 바뀝니다.'}
               </p>
             </div>
           </div>
@@ -193,12 +253,16 @@ export function Stage2FutureImagine({
                 htmlFor="stage2-keywords"
                 className="block text-sm font-semibold text-slate-800"
               >
-                나의 핵심 키워드 3가지
+                {lang === 'en' ? 'My 3 Core Keywords' : '나의 핵심 키워드 3가지'}
               </label>
               <span className="text-xs font-medium text-rose-600">
                 {joinedStateKeywords
-                  ? '1단계에서 입력한 키워드가 자동 입력됨'
-                  : '1단계에서 입력하면 자동으로 채워져요'}
+                  ? lang === 'en'
+                    ? 'Auto-filled from Step 1'
+                    : '1단계에서 입력한 키워드가 자동 입력됨'
+                  : lang === 'en'
+                    ? 'Auto-fills when entered in Step 1'
+                    : '1단계에서 입력하면 자동으로 채워져요'}
               </span>
             </div>
             <input
@@ -220,7 +284,11 @@ export function Stage2FutureImagine({
                   profileKeywords: next.filter((k) => k.trim()).join(', '),
                 });
               }}
-              placeholder="1단계에서 입력하면 자동으로 채워집니다"
+              placeholder={
+                lang === 'en'
+                  ? 'Auto-fills when entered in Step 1'
+                  : '1단계에서 입력하면 자동으로 채워집니다'
+              }
               className="w-full px-3.5 py-2.5 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
             />
           </div>
@@ -228,11 +296,15 @@ export function Stage2FutureImagine({
           {/* ① 미래 직업 */}
           <div className="pt-4 border-t border-slate-100 space-y-2.5">
             <span className="block text-sm font-semibold text-slate-800">
-              ① 미래 직업
+              {lang === 'en' ? '① Future Career' : '① 미래 직업'}
             </span>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {JOB_PRESETS.map((preset) => {
-                const active = !customJobMode && state.chosenJob === preset.job;
+                const enJob = JOB_PRESETS_EN[preset.job]?.job ?? preset.job;
+                const displayJob = lang === 'en' ? enJob : preset.job;
+                const active =
+                  !customJobMode &&
+                  (state.chosenJob === preset.job || state.chosenJob === enJob);
                 return (
                   <button
                     key={preset.job}
@@ -251,7 +323,7 @@ export function Stage2FutureImagine({
                     >
                       {active && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                     </span>
-                    <span className="truncate">{preset.job}</span>
+                    <span className="truncate">{displayJob}</span>
                   </button>
                 );
               })}
@@ -271,7 +343,7 @@ export function Stage2FutureImagine({
                 >
                   {customJobMode && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                 </span>
-                <span>직접 입력하기</span>
+                <span>{lang === 'en' ? 'Type my own' : '직접 입력하기'}</span>
               </button>
             </div>
 
@@ -280,7 +352,11 @@ export function Stage2FutureImagine({
                 type="text"
                 value={state.chosenJob}
                 onChange={(e) => onUpdate({ chosenJob: e.target.value })}
-                placeholder="원하는 미래 직업을 입력하세요 (예: 로봇 공학자)"
+                placeholder={
+                  lang === 'en'
+                    ? 'Enter your desired future career (e.g., Robotics Engineer)'
+                    : '원하는 미래 직업을 입력하세요 (예: 로봇 공학자)'
+                }
                 className="w-full px-3.5 py-2.5 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
               />
             )}
@@ -289,7 +365,7 @@ export function Stage2FutureImagine({
           {/* 성별 표현 */}
           <div className="pt-4 border-t border-slate-100">
             <span className="block text-sm font-semibold text-slate-800 mb-2">
-              캐릭터 성별 표현
+              {lang === 'en' ? 'Character Gender Presentation' : '캐릭터 성별 표현'}
             </span>
             <div className="flex flex-wrap gap-2">
               {(['남자', '여자', '선택 안 함'] as GenderOption[]).map((g) => (
@@ -303,7 +379,7 @@ export function Stage2FutureImagine({
                       : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  {g}
+                  {translateValue(g, GENDER_EN, lang)}
                 </button>
               ))}
             </div>
@@ -316,7 +392,7 @@ export function Stage2FutureImagine({
                 htmlFor="stage2-place"
                 className="block text-sm font-semibold text-slate-800"
               >
-                ② 일하는 장소
+                {lang === 'en' ? '② Workplace' : '② 일하는 장소'}
               </label>
               <button
                 type="button"
@@ -324,7 +400,11 @@ export function Stage2FutureImagine({
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors whitespace-nowrap"
               >
                 <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>‘{jobLabel}’ 어울리는 장소 추천받기</span>
+                <span>
+                  {lang === 'en'
+                    ? `Suggest workplace for ‘${jobLabel}’`
+                    : `‘${jobLabel}’ 어울리는 장소 추천받기`}
+                </span>
               </button>
             </div>
             <input
@@ -335,20 +415,25 @@ export function Stage2FutureImagine({
               className="w-full px-3.5 py-2.5 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
             />
             <div className="flex flex-wrap gap-1.5">
-              {PLACE_SUGGESTIONS.map((p) => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => onUpdate({ workplace: p })}
-                  className={`px-2.5 py-1 text-xs border rounded-md transition-colors ${
-                    state.workplace === p
-                      ? 'bg-rose-50 border-rose-300 text-rose-800 font-medium'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
-                  }`}
-                >
-                  {p}
-                </button>
-              ))}
+              {PLACE_SUGGESTIONS.map((p) => {
+                const enPlace = PLACE_SUGGESTIONS_EN[p] ?? p;
+                const displayPlace = lang === 'en' ? enPlace : p;
+                const active = state.workplace === p || state.workplace === enPlace;
+                return (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => onUpdate({ workplace: displayPlace })}
+                    className={`px-2.5 py-1 text-xs border rounded-md transition-colors ${
+                      active
+                        ? 'bg-rose-50 border-rose-300 text-rose-800 font-medium'
+                        : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    {displayPlace}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -359,7 +444,9 @@ export function Stage2FutureImagine({
                 htmlFor="stage2-action"
                 className="block text-sm font-semibold text-slate-800"
               >
-                ③ 하고 있는 일 (구체적 장면 묘사)
+                {lang === 'en'
+                  ? '③ What I Am Doing (Scene Description)'
+                  : '③ 하고 있는 일 (구체적 장면 묘사)'}
               </label>
               <button
                 type="button"
@@ -367,7 +454,11 @@ export function Stage2FutureImagine({
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors whitespace-nowrap"
               >
                 <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>‘{jobLabel}’ 어울리는 일 추천받기</span>
+                <span>
+                  {lang === 'en'
+                    ? `Suggest action for ‘${jobLabel}’`
+                    : `‘${jobLabel}’ 어울리는 일 추천받기`}
+                </span>
               </button>
             </div>
             <input
@@ -403,11 +494,12 @@ export function Stage2FutureImagine({
           {/* ④ 그림의 분위기 */}
           <div className="pt-4 border-t border-slate-100 space-y-2">
             <span className="block text-sm font-semibold text-slate-800">
-              ④ 그림의 분위기
+              {lang === 'en' ? '④ Image Mood' : '④ 그림의 분위기'}
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {STAGE2_MOODS.map((mood) => {
                 const active = !customMoodMode && state.mood === mood;
+                const label = translateValue(mood, STAGE2_MOOD_EN, lang);
                 return (
                   <button
                     key={mood}
@@ -429,7 +521,7 @@ export function Stage2FutureImagine({
                     >
                       {active && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                     </span>
-                    <span>{mood}</span>
+                    <span className="capitalize">{label}</span>
                   </button>
                 );
               })}
@@ -449,7 +541,7 @@ export function Stage2FutureImagine({
                 >
                   {customMoodMode && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                 </span>
-                <span>직접 입력하기</span>
+                <span>{lang === 'en' ? 'Type my own' : '직접 입력하기'}</span>
               </button>
             </div>
             {customMoodMode && (
@@ -457,7 +549,11 @@ export function Stage2FutureImagine({
                 type="text"
                 value={state.mood}
                 onChange={(e) => onUpdate({ mood: e.target.value })}
-                placeholder="원하는 분위기를 입력하세요"
+                placeholder={
+                  lang === 'en'
+                    ? 'Enter your preferred mood'
+                    : '원하는 분위기를 입력하세요'
+                }
                 className="w-full px-3.5 py-2 text-sm bg-white border-[1.5px] border-slate-400/80 rounded-lg focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15"
               />
             )}
@@ -466,11 +562,12 @@ export function Stage2FutureImagine({
           {/* ⑤ 이미지 스타일 */}
           <div className="pt-4 border-t border-slate-100 space-y-2">
             <span className="block text-sm font-semibold text-slate-800">
-              ⑤ 이미지 스타일
+              {lang === 'en' ? '⑤ Image Style' : '⑤ 이미지 스타일'}
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {STAGE2_STYLES.map((style) => {
                 const active = state.imageStyle === style;
+                const label = translateValue(style, STAGE2_STYLE_EN, lang);
                 return (
                   <button
                     key={style}
@@ -489,7 +586,7 @@ export function Stage2FutureImagine({
                     >
                       {active && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                     </span>
-                    <span className="truncate">{style}</span>
+                    <span className="truncate capitalize">{label}</span>
                   </button>
                 );
               })}
@@ -499,7 +596,9 @@ export function Stage2FutureImagine({
           {/* ⑥ 이미지 비율 */}
           <div className="pt-4 border-t border-slate-100 space-y-3">
             <span className="block text-sm font-semibold text-slate-800">
-              ⑥ 이미지 비율 (캔바 실습 시 가로·세로 각각 생성)
+              {lang === 'en'
+                ? '⑥ Aspect Ratio (generate portrait & landscape in Canva)'
+                : '⑥ 이미지 비율 (캔바 실습 시 가로·세로 각각 생성)'}
             </span>
             <div className="flex flex-wrap gap-2">
               {(['A4 세로', 'A4 가로', '자유'] as const).map((ratio) => (
@@ -513,7 +612,7 @@ export function Stage2FutureImagine({
                       : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  {ratio}
+                  {translateValue(ratio, ASPECT_RATIO_EN, lang)}
                 </button>
               ))}
             </div>
@@ -525,7 +624,11 @@ export function Stage2FutureImagine({
               onClick={onNextStage}
               className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-rose-600 rounded-lg hover:bg-rose-700 transition-colors whitespace-nowrap"
             >
-              <span>3단계: ‘미래의 나’ 캐릭터 만들기로 이동</span>
+              <span>
+                {lang === 'en'
+                  ? 'Go to Step 3: Design Future Character'
+                  : '3단계: ‘미래의 나’ 캐릭터 만들기로 이동'}
+              </span>
               <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
@@ -534,10 +637,20 @@ export function Stage2FutureImagine({
         {/* Right Zone */}
         <div className="lg:col-span-5">
           <PromptPreviewPanel
-            title="완성된 2단계 이미지 프롬프트"
-            subtitle="Canva(캔바) 또는 ChatGPT에 붙여넣어 가로·세로 이미지를 만들어 보세요."
+            title={
+              lang === 'en'
+                ? 'Completed Step 2 Image Prompt'
+                : '완성된 2단계 이미지 프롬프트'
+            }
+            subtitle={
+              lang === 'en'
+                ? 'Paste into Canva or ChatGPT to generate portrait and landscape images.'
+                : 'Canva(캔바) 또는 ChatGPT에 붙여넣어 가로·세로 이미지를 만들어 보세요.'
+            }
             promptText={promptText}
-            copyLabel="2단계 프롬프트 복사"
+            copyLabel={
+              lang === 'en' ? 'Copy Step 2 Prompt' : '2단계 프롬프트 복사'
+            }
             toolLink="both"
             accent="rose"
           />
@@ -546,7 +659,11 @@ export function Stage2FutureImagine({
 
       {/* Separate Optional Image Refinement Section (Slide 21) */}
       <section
-        aria-label="선택 활동 이미지 수정 요청"
+        aria-label={
+          lang === 'en'
+            ? 'Optional image refinement prompts'
+            : '선택 활동 이미지 수정 요청'
+        }
         className="bg-amber-50/75 border border-amber-200/90 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs"
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-amber-200/70">
@@ -556,15 +673,19 @@ export function Stage2FutureImagine({
             </div>
             <div>
               <span className="text-xs font-semibold text-amber-800 block">
-                선택 활동 · 생성된 이미지를 수정하고 싶을 때만 사용하세요
+                {lang === 'en'
+                  ? 'Optional · Use only when you want to edit the generated image'
+                  : '선택 활동 · 생성된 이미지를 수정하고 싶을 때만 사용하세요'}
               </span>
               <h3 className="text-base font-bold text-slate-900 mt-0.5">
-                이미지가 마음에 들지 않을 때? 수정 요청 프롬프트
+                {lang === 'en'
+                  ? 'Want to adjust the image? Copy a quick edit prompt'
+                  : '이미지가 마음에 들지 않을 때? 수정 요청 프롬프트'}
               </h3>
             </div>
           </div>
           <span className="text-xs text-amber-800/80 font-medium self-start sm:self-center">
-            필요할 때만 복사해서 사용하세요
+            {lang === 'en' ? 'Copy only when needed' : '필요할 때만 복사해서 사용하세요'}
           </span>
         </div>
 
@@ -588,12 +709,14 @@ export function Stage2FutureImagine({
                 {copiedFix === fix.id ? (
                   <>
                     <Check className="w-3 h-3 text-emerald-600" aria-hidden="true" />
-                    <span className="text-emerald-700">복사됨</span>
+                    <span className="text-emerald-700">
+                      {lang === 'en' ? 'Copied' : '복사됨'}
+                    </span>
                   </>
                 ) : (
                   <>
                     <Copy className="w-3 h-3" aria-hidden="true" />
-                    <span>복사</span>
+                    <span>{lang === 'en' ? 'Copy' : '복사'}</span>
                   </>
                 )}
               </button>
@@ -604,3 +727,4 @@ export function Stage2FutureImagine({
     </div>
   );
 }
+

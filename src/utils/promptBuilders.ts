@@ -1,6 +1,41 @@
+import { Language } from '../contexts/LanguageContext';
+import {
+  ASPECT_RATIO_EN,
+  COLOR_THEME_EN,
+  GENDER_EN,
+  JOB_FIELD_EN,
+  STAGE2_MOOD_EN,
+  STAGE2_STYLE_EN,
+  STAGE3_EXPRESSION_EN,
+  STAGE3_STYLE_EN,
+  translateKnownText,
+  translateValue,
+} from '../i18n/translations';
 import { StudentWorkspaceState } from '../types/lesson';
 
-export function buildStage1Prompt(state: StudentWorkspaceState): string {
+export function buildStage1Prompt(
+  state: StudentWorkspaceState,
+  lang: Language = 'ko'
+): string {
+  if (lang === 'en') {
+    const k1 = translateKnownText(state.keywords[0], 'en').trim() || 'Keyword 1';
+    const k2 = translateKnownText(state.keywords[1], 'en').trim() || 'Keyword 2';
+    const k3 = translateKnownText(state.keywords[2], 'en').trim() || 'Keyword 3';
+    const rawField = state.jobField.trim();
+    const fieldPart =
+      !rawField || rawField === '분야 무관 (전체)'
+        ? ''
+        : `in the ${translateValue(rawField, JOB_FIELD_EN, 'en')} field `;
+
+    return [
+      'You are a kind teacher helping a middle school student explore future careers.',
+      `My 3 core keywords are '${k1}', '${k2}', and '${k3}'.`,
+      `Please recommend 5 future careers ${fieldPart}related to these keywords.`,
+      'Organize what each career does, why you recommend it, required skills, and activities a middle schooler can try into a clear table.',
+      'Explain everything so a middle school student can easily understand.',
+    ].join('\n\n');
+  }
+
   const k1 = state.keywords[0].trim() || '핵심 키워드1';
   const k2 = state.keywords[1].trim() || '핵심 키워드2';
   const k3 = state.keywords[2].trim() || '핵심 키워드3';
@@ -18,7 +53,51 @@ export function buildStage1Prompt(state: StudentWorkspaceState): string {
   ].join('\n\n');
 }
 
-export function buildStage2Prompt(state: StudentWorkspaceState): string {
+export function buildStage2Prompt(
+  state: StudentWorkspaceState,
+  lang: Language = 'ko'
+): string {
+  if (lang === 'en') {
+    const k1 = translateKnownText(state.keywords[0], 'en').trim() || '[Keyword 1]';
+    const k2 = translateKnownText(state.keywords[1], 'en').trim() || '[Keyword 2]';
+    const k3 = translateKnownText(state.keywords[2], 'en').trim() || '[Keyword 3]';
+    const job = translateKnownText(state.chosenJob, 'en').trim() || '[Future Career]';
+    const place = translateKnownText(state.workplace, 'en').trim() || '[Workplace]';
+    const actionRaw = state.workAction.trim() || '[What I am doing]';
+    const action =
+      actionRaw.startsWith('[') || actionRaw.endsWith('.') ? actionRaw : `${actionRaw}.`;
+    const mood =
+      translateValue(state.mood.trim(), STAGE2_MOOD_EN, 'en') || '[Image mood]';
+    const style =
+      translateValue(state.imageStyle.trim(), STAGE2_STYLE_EN, 'en') ||
+      '3D animation style';
+
+    const genderLabel =
+      !state.gender || state.gender === '선택 안 함'
+        ? ''
+        : ` ${translateValue(state.gender, GENDER_EN, 'en').toLowerCase()}`;
+
+    const genderLine = `20 years from now, I am a Korean${genderLabel} working as a ${job}.`;
+
+    const ratioClause =
+      !state.aspectRatio || state.aspectRatio === '자유'
+        ? 'Please generate this image.'
+        : `Please generate this image in a ${translateValue(
+            state.aspectRatio,
+            ASPECT_RATIO_EN,
+            'en'
+          )} aspect ratio.`;
+
+    return [
+      `My core keywords are ${k1}, ${k2}, and ${k3}.`,
+      genderLine,
+      `I am in ${place}, ${action}`,
+      `The mood is ${mood}.`,
+      `Create an image of my future self in a ${style}. ${ratioClause}`,
+      'Include outfits and props that clearly show the characteristics of the career.',
+    ].join('\n');
+  }
+
   const k1 = state.keywords[0].trim() || '[핵심 키워드1]';
   const k2 = state.keywords[1].trim() || '[핵심 키워드2]';
   const k3 = state.keywords[2].trim() || '[핵심 키워드3]';
@@ -51,7 +130,71 @@ export function buildStage2Prompt(state: StudentWorkspaceState): string {
   return lines.join('\n');
 }
 
-export function buildStage3CoachPrompt(state: StudentWorkspaceState): string {
+export function buildStage3CoachPrompt(
+  state: StudentWorkspaceState,
+  lang: Language = 'ko'
+): string {
+  if (lang === 'en') {
+    const filledKeywords = state.keywords
+      .map((k) => translateKnownText(k, 'en').trim())
+      .filter(Boolean);
+    const job = translateKnownText(state.chosenJob, 'en').trim();
+
+    let seedNote = 'Now let’s start by choosing my 3 core keywords!';
+    if (filledKeywords.length > 0 && job) {
+      seedNote = `(Note: My current core keywords are '${filledKeywords.join(', ')}' and my future career is '${job}'. You can confirm Step 1 "My Dream" with these and start from Step 2 Appearance—or ask if I’d like to change them!)`;
+    } else if (filledKeywords.length > 0) {
+      seedNote = `(Note: My current core keywords are '${filledKeywords.join(', ')}'. Please continue from choosing my future career using these keywords!)`;
+    } else if (job) {
+      seedNote = `(Note: My future career is '${job}'. Please help me pick 3 core keywords based on this career and continue!)`;
+    }
+
+    return `😊 My Future Self, AI Character Design
+
+You are a friendly AI design coach helping a middle school student design their career character.
+Based on my 3 core keywords and future career, help me design a cute and expressive character of myself 20 years in the future.
+
+1. How We Will Proceed
+• Ask one question at a time.
+• Show options 1–5 plus "6. Type my own" for every question.
+• State how many choices to pick for each question.
+• Remember each choice and move smoothly to the next question.
+• If I pick too many options, gently ask me to choose again.
+• Allow edits anytime, and don’t repeat questions already decided.
+• Recommend options that match my future career.
+
+2. Question Order
+1. My Dream: Core keywords (3), Future career (1)
+2. Appearance: Gender expression, skin tone, face shape, hairstyle (1 each)
+3. Outfit: Career-appropriate outfit (1)
+4. Pose & Props: Pose (1), key props (1–2)
+5. Expression & Mood: 1 choice
+6. Colors: Main outfit color (1)
+
+3. Image Creation Guidelines
+• High-quality 3D designer toy collectible figure style
+• Korean adult character with big eyes and cute proportions, without looking overly childish.
+• Accurately reflect the student’s chosen career, appearance, outfit, pose, and expression.
+• Craft distinctive face shape, eyes, hairstyle, build, and outfit details so the character feels original.
+• Highlight a dynamic career-related pose with 1–2 key props, adding small accents only when helpful.
+• Let AI harmoniously suggest colors for props, accents, and overall tone.
+• Apply refined collectible-toy 3D textures and high-quality 3D rendering.
+• Clean Canva-ready layout, solid white background, full-body view, vivid colors, and soft lighting so it works great as a sticker.
+
+4. Final Result
+When all choices are complete, show the following:
+1. Character Spec Sheet (including AI-suggested props & accents)
+2. Image Generation Prompts: 1 for ChatGPT, 1 for Canva
+
+Write both image generation prompts in clear, detailed English tailored to each tool, including all confirmed choices and image guidelines.
+Do not generate the image yet—show this menu at the end:
+1. Generate image
+2. Edit some settings
+3. Start over from Step 1
+
+${seedNote}`;
+  }
+
   const filledKeywords = state.keywords.map((k) => k.trim()).filter(Boolean);
   const job = state.chosenJob.trim();
 
@@ -110,7 +253,38 @@ export function buildStage3CoachPrompt(state: StudentWorkspaceState): string {
 ${seedNote}`;
 }
 
-export function buildStage3DirectPrompt(state: StudentWorkspaceState): string {
+export function buildStage3DirectPrompt(
+  state: StudentWorkspaceState,
+  lang: Language = 'ko'
+): string {
+  if (lang === 'en') {
+    const k1 = translateKnownText(state.keywords[0], 'en').trim() || '[Keyword 1]';
+    const k2 = translateKnownText(state.keywords[1], 'en').trim() || '[Keyword 2]';
+    const k3 = translateKnownText(state.keywords[2], 'en').trim() || '[Keyword 3]';
+    const job = translateKnownText(state.chosenJob, 'en').trim() || '[Future Career]';
+    const props = state.charProps.trim() || '[Career props]';
+    const action = state.charAction.trim() || '[Action & pose]';
+    const expression =
+      translateValue(state.charExpression.trim(), STAGE3_EXPRESSION_EN, 'en') ||
+      '[Expression & mood]';
+    const genderPart =
+      !state.gender || state.gender === '선택 안 함'
+        ? ''
+        : `${translateValue(state.gender, GENDER_EN, 'en').toLowerCase()} `;
+    const style =
+      translateValue(state.charStyle.trim(), STAGE3_STYLE_EN, 'en') ||
+      '[Character style]';
+
+    return [
+      `My future career is ${job}.`,
+      `Create a cute character symbolizing ${k1}, ${k2}, and ${k3}.`,
+      `Feature ${props} representing the career, posed as ${action}.`,
+      `It is a Korean adult ${genderPart}character with ${expression},`,
+      `rendered in ${style}.`,
+      'Generate on a pure white background, full-body composition, high-quality rendering, ready to use like a sticker.',
+    ].join('\n');
+  }
+
   const k1 = state.keywords[0].trim() || '[핵심 키워드1]';
   const k2 = state.keywords[1].trim() || '[핵심 키워드2]';
   const k3 = state.keywords[2].trim() || '[핵심 키워드3]';
@@ -132,7 +306,91 @@ export function buildStage3DirectPrompt(state: StudentWorkspaceState): string {
   ].join('\n');
 }
 
-export function buildStage4Prompt(state: StudentWorkspaceState): string {
+export function buildStage4Prompt(
+  state: StudentWorkspaceState,
+  lang: Language = 'ko'
+): string {
+  if (lang === 'en') {
+    const name = state.studentName.trim() || '[Name]';
+    const job = translateKnownText(state.chosenJob, 'en').trim() || '[Future Career]';
+    const age = state.studentAge.trim() || '[Age]';
+    const mbti = state.mbti.trim() || '[MBTI]';
+    const motto = state.motto.trim() || '[Motto]';
+    const keywords =
+      translateKnownText(state.profileKeywords.trim(), 'en') ||
+      state.keywords
+        .map((k) => translateKnownText(k, 'en').trim())
+        .filter(Boolean)
+        .join(', ') ||
+      '[Keywords describing me]';
+    const likes = state.likes.trim() || '[Things I like]';
+    const strengthsList = state.strengths.filter((s) => s.trim().length > 0);
+    const goalsList = state.goals.filter((g) => g.trim().length > 0);
+    const pledge = state.pledge.trim() || '[My pledge]';
+    const message = state.messageToFuture.trim() || '[Message to my future self]';
+    const colorTheme =
+      translateValue(state.colorTheme.trim(), COLOR_THEME_EN, 'en') ||
+      '[Poster color theme]';
+
+    const aiSection = state.aiViewAuto
+      ? '- Write 3–4 natural lines based on the profile details above.'
+      : `- ${state.aiViewCustom.trim() || 'Write naturally based on the details above.'}`;
+
+    const strengthLines =
+      strengthsList.length > 0
+        ? strengthsList.map((s) => `- ${s}`).join('\n')
+        : '- [Strength 1]\n- [Strength 2]\n- [Strength 3]';
+
+    const goalLines =
+      goalsList.length > 0
+        ? goalsList.map((g) => `- ${g}`).join('\n')
+        : '- [Future Goal 1]\n- [Future Goal 2]\n- [Future Goal 3]';
+
+    return `Create a "My Future Profile Card." Design the overall look as a clean, polished student portfolio poster like one made in Canva.
+
+■ Title: My Future Profile Card
+
+■ Basic Info
+- Name: ${name}
+- Future Career: ${job}
+- Age: ${age}
+- MBTI: ${mbti}
+- Motto: ${motto}
+
+■ Keywords That Describe Me
+- ${keywords}
+
+■ Things I Like
+- ${likes}
+
+■ My Top Strengths
+${strengthLines}
+
+■ How AI Sees Me
+${aiSection}
+
+■ Future Goals
+${goalLines}
+
+■ My Pledge
+- ${pledge}
+
+■ A Message to My Future Self
+- ${message}
+
+■ Design Conditions
+- Feature the attached character prominently
+- Cute 3D sticker style
+- Clean Canva-like layout
+- Clear, legible English typography
+- ${colorTheme}
+- A4 portrait ratio, student exhibition poster aesthetic
+- High resolution, rounded card sections, generous whitespace
+- Tastefully include cute icons and prop illustrations matching the career
+
+Generate the Future Profile Card image featuring the uploaded character.`;
+  }
+
   const name = state.studentName.trim() || '[이름]';
   const job = state.chosenJob.trim() || '[미래 직업]';
   const age = state.studentAge.trim() || '[나이]';

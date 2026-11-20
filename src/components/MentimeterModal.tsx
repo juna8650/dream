@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Check, Copy, ExternalLink, QrCode, X } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 import { CLASSROOM_LINKS, LESSON_ASSETS } from '../data/curriculum';
 import { copyTextToClipboard } from '../utils/clipboard';
 
@@ -9,6 +10,7 @@ interface MentimeterModalProps {
 }
 
 export function MentimeterModal({ isOpen, onClose }: MentimeterModalProps) {
+  const { lang } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -54,13 +56,13 @@ export function MentimeterModal({ isOpen, onClose }: MentimeterModalProps) {
               id="mentimeter-modal-title"
               className="text-base font-bold text-slate-900"
             >
-              멘티미터(Mentimeter) QR코드
+              {lang === 'en' ? 'Mentimeter QR Code' : '멘티미터(Mentimeter) QR코드'}
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            aria-label="QR코드 창 닫기"
+            aria-label={lang === 'en' ? 'Close QR code modal' : 'QR코드 창 닫기'}
             className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" aria-hidden="true" />
@@ -69,13 +71,15 @@ export function MentimeterModal({ isOpen, onClose }: MentimeterModalProps) {
 
         <div className="p-6 flex flex-col items-center text-center space-y-4">
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-            작성한 활동지를 보면서 스마트폰 카메라로 아래 QR코드를 스캔해 나의 키워드를 공유해 보세요.
+            {lang === 'en'
+              ? 'Check your worksheet and scan the QR code below with your phone camera to share your keywords.'
+              : '작성한 활동지를 보면서 스마트폰 카메라로 아래 QR코드를 스캔해 나의 키워드를 공유해 보세요.'}
           </p>
 
           <div className="bg-white p-4 rounded-2xl border-2 border-slate-200 shadow-xs">
             <img
               src={LESSON_ASSETS.mentimeterQr}
-              alt="멘티미터 접속 QR코드"
+              alt={lang === 'en' ? 'Mentimeter join QR code' : '멘티미터 접속 QR코드'}
               className="w-60 h-60 sm:w-64 sm:h-64 object-contain"
             />
           </div>
@@ -92,12 +96,14 @@ export function MentimeterModal({ isOpen, onClose }: MentimeterModalProps) {
               {copied ? (
                 <>
                   <Check className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
-                  <span className="text-emerald-700">복사됨</span>
+                  <span className="text-emerald-700">
+                    {lang === 'en' ? 'Copied' : '복사됨'}
+                  </span>
                 </>
               ) : (
                 <>
                   <Copy className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>주소 복사</span>
+                  <span>{lang === 'en' ? 'Copy URL' : '주소 복사'}</span>
                 </>
               )}
             </button>
@@ -110,7 +116,7 @@ export function MentimeterModal({ isOpen, onClose }: MentimeterModalProps) {
               rel="noopener noreferrer"
               className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-4 text-sm font-semibold text-white bg-sky-600 rounded-lg hover:bg-sky-700 transition-colors whitespace-nowrap"
             >
-              <span>멘티미터 바로 열기</span>
+              <span>{lang === 'en' ? 'Open Mentimeter' : '멘티미터 바로 열기'}</span>
               <ExternalLink className="w-4 h-4" aria-hidden="true" />
             </a>
             <button
@@ -118,7 +124,7 @@ export function MentimeterModal({ isOpen, onClose }: MentimeterModalProps) {
               onClick={onClose}
               className="py-2.5 px-4 text-sm font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors whitespace-nowrap"
             >
-              닫기
+              {lang === 'en' ? 'Close' : '닫기'}
             </button>
           </div>
         </div>
@@ -126,3 +132,4 @@ export function MentimeterModal({ isOpen, onClose }: MentimeterModalProps) {
     </div>
   );
 }
+

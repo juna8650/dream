@@ -9,7 +9,9 @@ import {
   Loader2,
   Sparkles,
 } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 import { LESSON_ASSETS, PROFILE_CARD_EXAMPLES } from '../data/curriculum';
+import { PROFILE_CARD_EXAMPLES_EN } from '../i18n/translations';
 import { ProfileCardExample } from '../types/lesson';
 import { copyTextToClipboard } from '../utils/clipboard';
 import { renderPosterImageFromPdf } from '../utils/pdfPosterExtractor';
@@ -25,9 +27,16 @@ export function ExamplesGallery({
   onSelectExampleId,
   onApplyToStage4,
 }: ExamplesGalleryProps) {
+  const { lang } = useLanguage();
   const activeExample =
     PROFILE_CARD_EXAMPLES.find((ex) => ex.id === selectedExampleId) ??
     PROFILE_CARD_EXAMPLES[0];
+
+  const activeEn = PROFILE_CARD_EXAMPLES_EN[activeExample.id];
+  const activeJobTitle =
+    lang === 'en' && activeEn ? activeEn.jobTitle : activeExample.jobTitle;
+  const activePrompt =
+    lang === 'en' && activeEn ? activeEn.rawPrompt : activeExample.rawPrompt;
 
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [posterUrl, setPosterUrl] = useState<string | null>(null);
@@ -63,10 +72,10 @@ export function ExamplesGallery({
     onSelectExampleId(ex.id);
   };
 
-  const handleCopyPrompt = async (ex: ProfileCardExample) => {
-    const ok = await copyTextToClipboard(ex.rawPrompt);
+  const handleCopyPrompt = async (id: string, promptText: string) => {
+    const ok = await copyTextToClipboard(promptText);
     if (ok) {
-      setCopiedId(ex.id);
+      setCopiedId(id);
       window.setTimeout(() => setCopiedId(null), 2000);
     }
   };
@@ -81,13 +90,19 @@ export function ExamplesGallery({
           </div>
           <div>
             <span className="text-xs font-semibold text-teal-700">
-              참고 자료 · 나의 미래 프로필 카드 만들기.pdf (총 27쪽)
+              {lang === 'en'
+                ? 'Reference · Future Profile Card Examples.pdf (27 pages)'
+                : '참고 자료 · 나의 미래 프로필 카드 만들기.pdf (총 27쪽)'}
             </span>
             <h2 className="text-lg font-bold text-slate-900 mt-0.5">
-              12가지 미래 직업 프로필 카드 예시 자료실
+              {lang === 'en'
+                ? '12 Future Career Profile Card Examples'
+                : '12가지 미래 직업 프로필 카드 예시 자료실'}
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-              왼쪽에서 직업을 선택하면 완성된 프로필 카드 이미지 예시와 프롬프트를 바로 확인할 수 있습니다.
+              {lang === 'en'
+                ? 'Select a career on the left to inspect its completed profile card poster and sample prompt.'
+                : '왼쪽에서 직업을 선택하면 완성된 프로필 카드 이미지 예시와 프롬프트를 바로 확인할 수 있습니다.'}
             </p>
           </div>
         </div>
@@ -99,7 +114,7 @@ export function ExamplesGallery({
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 whitespace-nowrap"
           >
-            <span>PDF 새 창 열기</span>
+            <span>{lang === 'en' ? 'Open PDF in New Tab' : 'PDF 새 창 열기'}</span>
             <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
           </a>
           <a
@@ -108,7 +123,7 @@ export function ExamplesGallery({
             className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-slate-900 rounded-lg hover:bg-slate-800 whitespace-nowrap"
           >
             <Download className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>예시 PDF 다운로드</span>
+            <span>{lang === 'en' ? 'Download Example PDF' : '예시 PDF 다운로드'}</span>
           </a>
         </div>
       </div>
@@ -119,11 +134,15 @@ export function ExamplesGallery({
         <div className="lg:col-span-5 bg-white border border-slate-200 rounded-xl p-5 space-y-5">
           <div>
             <h3 className="text-sm font-bold text-slate-900 mb-2.5">
-              직업 예시 선택 (12종)
+              {lang === 'en' ? 'Select Career Example (12)' : '직업 예시 선택 (12종)'}
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-2">
               {PROFILE_CARD_EXAMPLES.map((ex) => {
                 const isSelected = ex.id === activeExample.id;
+                const title =
+                  lang === 'en'
+                    ? (PROFILE_CARD_EXAMPLES_EN[ex.id]?.jobTitle ?? ex.jobTitle)
+                    : ex.jobTitle;
                 return (
                   <button
                     key={ex.id}
@@ -136,7 +155,7 @@ export function ExamplesGallery({
                     }`}
                   >
                     <span className="truncate">
-                      {ex.number}. {ex.jobTitle}
+                      {ex.number}. {title}
                     </span>
                   </button>
                 );
@@ -148,26 +167,32 @@ export function ExamplesGallery({
             <div className="flex items-center justify-between gap-2">
               <div>
                 <h3 className="text-base font-bold text-slate-900">
-                  {activeExample.number}. {activeExample.jobTitle} 예시 프롬프트
+                  {lang === 'en'
+                    ? `${activeExample.number}. ${activeJobTitle} Sample Prompt`
+                    : `${activeExample.number}. ${activeJobTitle} 예시 프롬프트`}
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  PDF {activeExample.pdfPromptPage}쪽 프롬프트 · {activeExample.pdfPosterPage}쪽 완성 포스터
+                  {lang === 'en'
+                    ? `PDF p.${activeExample.pdfPromptPage} Prompt · p.${activeExample.pdfPosterPage} Poster`
+                    : `PDF ${activeExample.pdfPromptPage}쪽 프롬프트 · ${activeExample.pdfPosterPage}쪽 완성 포스터`}
                 </p>
               </div>
               <button
                 type="button"
-                onClick={() => handleCopyPrompt(activeExample)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 rounded-md hover:bg-slate-200 shrink-0"
+                onClick={() => handleCopyPrompt(activeExample.id, activePrompt)}
+                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 rounded-md hover:bg-slate-200 shrink-0 whitespace-nowrap"
               >
                 {copiedId === activeExample.id ? (
                   <>
                     <Check className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
-                    <span className="text-emerald-700">복사됨</span>
+                    <span className="text-emerald-700">
+                      {lang === 'en' ? 'Copied' : '복사됨'}
+                    </span>
                   </>
                 ) : (
                   <>
                     <Copy className="w-3.5 h-3.5" aria-hidden="true" />
-                    <span>프롬프트 복사</span>
+                    <span>{lang === 'en' ? 'Copy Prompt' : '프롬프트 복사'}</span>
                   </>
                 )}
               </button>
@@ -175,7 +200,7 @@ export function ExamplesGallery({
 
             <div className="bg-slate-50 border border-slate-200 rounded-lg p-3.5 max-h-[300px] overflow-y-auto">
               <pre className="whitespace-pre-wrap break-words text-xs leading-relaxed text-slate-800 font-sans">
-                {activeExample.rawPrompt}
+                {activePrompt}
               </pre>
             </div>
 
@@ -185,7 +210,11 @@ export function ExamplesGallery({
               className="w-full py-2.5 px-4 text-sm font-semibold text-white bg-teal-600 rounded-lg hover:bg-teal-700 transition-colors flex items-center justify-center gap-2"
             >
               <Sparkles className="w-4 h-4" aria-hidden="true" />
-              <span>이 예시를 4단계 프롬프트 생성기에 채우기</span>
+              <span>
+                {lang === 'en'
+                  ? 'Fill Step 4 Generator with This Example'
+                  : '이 예시를 4단계 프롬프트 생성기에 채우기'}
+              </span>
             </button>
           </div>
         </div>
@@ -199,7 +228,9 @@ export function ExamplesGallery({
               </div>
               <div>
                 <h3 className="text-base font-bold text-slate-900">
-                  {activeExample.number}. {activeExample.jobTitle} — 나의 미래 프로필 카드 이미지 예시
+                  {lang === 'en'
+                    ? `${activeExample.number}. ${activeJobTitle} — Future Profile Card Example`
+                    : `${activeExample.number}. ${activeJobTitle} — 나의 미래 프로필 카드 이미지 예시`}
                 </h3>
               </div>
             </div>
@@ -213,13 +244,17 @@ export function ExamplesGallery({
               <div className="flex flex-col items-center gap-2.5 text-slate-500 py-16">
                 <Loader2 className="w-7 h-7 animate-spin text-teal-600" aria-hidden="true" />
                 <span className="text-sm font-medium">
-                  프로필 카드 이미지 예시를 불러오는 중입니다...
+                  {lang === 'en'
+                    ? 'Loading profile card example image...'
+                    : '프로필 카드 이미지 예시를 불러오는 중입니다...'}
                 </span>
               </div>
             ) : posterError || !posterUrl ? (
               <div className="text-center space-y-3 py-12 px-4">
                 <p className="text-sm text-slate-600">
-                  이미지를 불러오는 데 문제가 발생했습니다. 상단의 ‘PDF 새 창 열기’ 버튼을 이용해 확인해 주세요.
+                  {lang === 'en'
+                    ? 'Unable to preview the image here. Please use the “Open PDF in New Tab” button above.'
+                    : '이미지를 불러오는 데 문제가 발생했습니다. 상단의 ‘PDF 새 창 열기’ 버튼을 이용해 확인해 주세요.'}
                 </p>
                 <a
                   href={`${LESSON_ASSETS.profileCardExamplesPdf}#page=${activeExample.pdfPosterPage}`}
@@ -227,14 +262,20 @@ export function ExamplesGallery({
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-teal-600 rounded-lg hover:bg-teal-700"
                 >
-                  <span>새 창에서 포스터 열기</span>
+                  <span>
+                    {lang === 'en' ? 'Open Poster in New Tab' : '새 창에서 포스터 열기'}
+                  </span>
                   <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
                 </a>
               </div>
             ) : (
               <img
                 src={posterUrl}
-                alt={`${activeExample.jobTitle} 나의 미래 프로필 카드 예시 이미지`}
+                alt={
+                  lang === 'en'
+                    ? `${activeJobTitle} Future Profile Card example image`
+                    : `${activeJobTitle} 나의 미래 프로필 카드 예시 이미지`
+                }
                 className="w-full max-w-[520px] h-auto rounded-lg shadow-sm border border-slate-200 bg-white object-contain"
               />
             )}
@@ -244,3 +285,4 @@ export function ExamplesGallery({
     </div>
   );
 }
+

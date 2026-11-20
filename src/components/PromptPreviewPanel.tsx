@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { Check, Copy, ExternalLink, FileCheck2, Pencil, RotateCcw } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 import { CLASSROOM_LINKS } from '../data/curriculum';
 import { copyTextToClipboard } from '../utils/clipboard';
 
@@ -49,12 +50,13 @@ export function PromptPreviewPanel({
   title,
   subtitle,
   promptText,
-  copyLabel = '완성된 프롬프트 복사',
+  copyLabel,
   toolLink = 'chatgpt',
   showPadletLink = false,
   reminderBanner,
   accent = 'sky',
 }: PromptPreviewPanelProps) {
+  const { lang } = useLanguage();
   const editorId = useId();
   const [copied, setCopied] = useState(false);
   const [editedText, setEditedText] = useState(promptText);
@@ -62,6 +64,8 @@ export function PromptPreviewPanel({
   const theme = ACCENT_MAP[accent];
 
   const isCustomized = editedText !== promptText;
+  const effectiveCopyLabel =
+    copyLabel ?? (lang === 'en' ? 'Copy Completed Prompt' : '완성된 프롬프트 복사');
 
   useEffect(() => {
     setEditedText(promptText);
@@ -95,14 +99,16 @@ export function PromptPreviewPanel({
             </div>
             <div>
               <span className={`text-xs font-semibold block mb-0.5 ${theme.kicker}`}>
-                완성된 프롬프트 영역 · 직접 수정 후 복사 가능
+                {lang === 'en'
+                  ? 'Prompt Output · Edit directly and copy'
+                  : '완성된 프롬프트 영역 · 직접 수정 후 복사 가능'}
               </span>
               <h2 className="text-lg font-bold text-white">{title}</h2>
               <p className="text-xs sm:text-sm text-slate-300 mt-0.5">{subtitle}</p>
             </div>
           </div>
           <span className="text-xs font-mono tabular-nums text-slate-300 shrink-0 pt-1">
-            {editedText.length}자
+            {lang === 'en' ? `${editedText.length} chars` : `${editedText.length}자`}
           </span>
         </div>
 
@@ -123,8 +129,12 @@ export function PromptPreviewPanel({
               <Pencil className="w-3.5 h-3.5 text-slate-400" aria-hidden="true" />
               <span>
                 {isCustomized
-                  ? '직접 수정한 내용이 적용되어 있습니다'
-                  : '이 칸을 눌러 내용을 직접 고칠 수 있어요'}
+                  ? lang === 'en'
+                    ? 'Custom edits are applied'
+                    : '직접 수정한 내용이 적용되어 있습니다'
+                  : lang === 'en'
+                    ? 'Click here to edit the prompt directly'
+                    : '이 칸을 눌러 내용을 직접 고칠 수 있어요'}
               </span>
             </label>
             {isCustomized && (
@@ -134,7 +144,7 @@ export function PromptPreviewPanel({
                 className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-slate-200 bg-white/10 hover:bg-white/15 rounded-md transition-colors whitespace-nowrap"
               >
                 <RotateCcw className="w-3 h-3" aria-hidden="true" />
-                <span>원래대로</span>
+                <span>{lang === 'en' ? 'Reset' : '원래대로'}</span>
               </button>
             )}
           </div>
@@ -161,12 +171,16 @@ export function PromptPreviewPanel({
           {copied ? (
             <>
               <Check className="w-4 h-4 shrink-0" aria-hidden="true" />
-              <span>복사 완료! AI 사이트에 붙여넣기(Ctrl+V) 하세요</span>
+              <span>
+                {lang === 'en'
+                  ? 'Copied! Paste (Ctrl+V) into your AI tool'
+                  : '복사 완료! AI 사이트에 붙여넣기(Ctrl+V) 하세요'}
+              </span>
             </>
           ) : (
             <>
               <Copy className="w-4 h-4 shrink-0" aria-hidden="true" />
-              <span>{copyLabel}</span>
+              <span>{effectiveCopyLabel}</span>
             </>
           )}
         </button>
@@ -179,7 +193,7 @@ export function PromptPreviewPanel({
               rel="noopener noreferrer"
               className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-100 bg-[#1F2D4D] border border-[#344873] rounded-lg hover:bg-[#293B63] transition-colors whitespace-nowrap"
             >
-              <span>ChatGPT 바로가기</span>
+              <span>{lang === 'en' ? 'Open ChatGPT' : 'ChatGPT 바로가기'}</span>
               <ExternalLink className="w-3.5 h-3.5 text-sky-300" aria-hidden="true" />
             </a>
           )}
@@ -190,7 +204,7 @@ export function PromptPreviewPanel({
               rel="noopener noreferrer"
               className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-100 bg-[#1F2D4D] border border-[#344873] rounded-lg hover:bg-[#293B63] transition-colors whitespace-nowrap"
             >
-              <span>Canva 바로가기</span>
+              <span>{lang === 'en' ? 'Open Canva' : 'Canva 바로가기'}</span>
               <ExternalLink className="w-3.5 h-3.5 text-sky-300" aria-hidden="true" />
             </a>
           )}
@@ -201,7 +215,7 @@ export function PromptPreviewPanel({
               rel="noopener noreferrer"
               className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-rose-100 bg-rose-500/20 border border-rose-400/40 rounded-lg hover:bg-rose-500/30 transition-colors whitespace-nowrap"
             >
-              <span>패들렛 작품 올리기</span>
+              <span>{lang === 'en' ? 'Upload to Padlet' : '패들렛 작품 올리기'}</span>
               <ExternalLink className="w-3.5 h-3.5 text-rose-200" aria-hidden="true" />
             </a>
           )}
@@ -210,3 +224,4 @@ export function PromptPreviewPanel({
     </div>
   );
 }
+

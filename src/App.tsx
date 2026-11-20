@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Globe } from 'lucide-react';
 import { ExamplesGallery } from './components/ExamplesGallery';
 import { Header } from './components/Header';
 import { MentimeterModal } from './components/MentimeterModal';
@@ -7,10 +8,12 @@ import { Stage2FutureImagine } from './components/Stage2FutureImagine';
 import { Stage3CharacterDesign } from './components/Stage3CharacterDesign';
 import { Stage4ProfileCard } from './components/Stage4ProfileCard';
 import { StageStepper } from './components/StageStepper';
+import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import {
   INITIAL_WORKSPACE_STATE,
   PROFILE_CARD_EXAMPLES,
 } from './data/curriculum';
+import { PROFILE_CARD_EXAMPLES_EN } from './i18n/translations';
 import {
   ActiveTab,
   ProfileCardExample,
@@ -30,13 +33,21 @@ function loadInitialState(): StudentWorkspaceState {
   }
 }
 
-export default function App() {
+function InnerApp() {
+  const { lang, setLang } = useLanguage();
   const [activeTab, setActiveTab] = useState<ActiveTab>('stage1');
   const [workspace, setWorkspace] = useState<StudentWorkspaceState>(loadInitialState);
   const [selectedExampleId, setSelectedExampleId] = useState<string>(
     PROFILE_CARD_EXAMPLES[0].id
   );
   const [mentimeterOpen, setMentimeterOpen] = useState(false);
+
+  useEffect(() => {
+    document.title =
+      lang === 'en'
+        ? 'My Future with AI — Career Prompt Generator'
+        : 'AI와 함께 만드는 나의 미래 — 중학생 진로 프롬프트 생성기';
+  }, [lang]);
 
   useEffect(() => {
     try {
@@ -63,22 +74,28 @@ export default function App() {
   };
 
   const handleApplyExampleToStage4 = (ex: ProfileCardExample) => {
+    const enEx = lang === 'en' ? PROFILE_CARD_EXAMPLES_EN[ex.id] : undefined;
+    const source = enEx ?? ex;
     handleUpdateWorkspace({
-      studentName: ex.studentName,
-      chosenJob: ex.jobTitle,
-      studentAge: ex.age,
+      studentName: source.studentName,
+      chosenJob: source.jobTitle,
+      studentAge: source.age,
       mbti: ex.mbti,
-      motto: ex.motto,
-      profileKeywords: ex.keywords.join(', '),
-      likes: ex.likes.join(', '),
+      motto: source.motto,
+      profileKeywords: source.keywords.join(', '),
+      likes: source.likes.join(', '),
       strengths: [
-        ex.strengths[0] ?? '',
-        ex.strengths[1] ?? '',
-        ex.strengths[2] ?? '',
+        source.strengths[0] ?? '',
+        source.strengths[1] ?? '',
+        source.strengths[2] ?? '',
       ],
-      goals: [ex.goals[0] ?? '', ex.goals[1] ?? '', ex.goals[2] ?? ''],
-      pledge: ex.pledge,
-      messageToFuture: ex.messageToFuture,
+      goals: [
+        source.goals[0] ?? '',
+        source.goals[1] ?? '',
+        source.goals[2] ?? '',
+      ],
+      pledge: source.pledge,
+      messageToFuture: source.messageToFuture,
       colorTheme: ex.colorTheme,
     });
     handleSelectTab('stage4');
@@ -141,10 +158,44 @@ export default function App() {
       </main>
 
       <footer className="border-t border-slate-200 bg-white mt-12">
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-5 flex items-center justify-center sm:justify-start text-xs text-slate-500">
-          <p>
-            AI와 함께 만드는 나의 미래 · 중학생 진로 탐색 수업용 프롬프트 생성기
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+          <p className="text-center sm:text-left">
+            {lang === 'en'
+              ? 'My Future with AI · Career Exploration Prompt Generator for Middle School Students'
+              : 'AI와 함께 만드는 나의 미래 · 중학생 진로 탐색 수업용 프롬프트 생성기'}
           </p>
+
+          <div
+            role="group"
+            aria-label={lang === 'en' ? 'Language setting' : '언어 설정'}
+            className="inline-flex items-center gap-1 p-1 bg-slate-100 border border-slate-200 rounded-lg shrink-0"
+          >
+            <Globe className="w-3.5 h-3.5 text-slate-500 ml-1.5 mr-0.5 shrink-0" aria-hidden="true" />
+            <button
+              type="button"
+              onClick={() => setLang('ko')}
+              aria-pressed={lang === 'ko'}
+              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors whitespace-nowrap ${
+                lang === 'ko'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              한국어
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang('en')}
+              aria-pressed={lang === 'en'}
+              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors whitespace-nowrap ${
+                lang === 'en'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              English
+            </button>
+          </div>
         </div>
       </footer>
 
@@ -155,3 +206,12 @@ export default function App() {
     </div>
   );
 }
+
+export default function App() {
+  return (
+    <LanguageProvider>
+      <InnerApp />
+    </LanguageProvider>
+  );
+}
+
