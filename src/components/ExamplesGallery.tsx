@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { LESSON_ASSETS, PROFILE_CARD_EXAMPLES } from '../data/curriculum';
 import { ProfileCardExample } from '../types/lesson';
+import { copyTextToClipboard } from '../utils/clipboard';
 import { renderPosterImageFromPdf } from '../utils/pdfPosterExtractor';
 
 interface ExamplesGalleryProps {
@@ -63,13 +64,11 @@ export function ExamplesGallery({
   };
 
   const handleCopyPrompt = async (ex: ProfileCardExample) => {
-    try {
-      await navigator.clipboard.writeText(ex.rawPrompt);
-    } catch {
-      // ignore
+    const ok = await copyTextToClipboard(ex.rawPrompt);
+    if (ok) {
+      setCopiedId(ex.id);
+      window.setTimeout(() => setCopiedId(null), 2000);
     }
-    setCopiedId(ex.id);
-    window.setTimeout(() => setCopiedId(null), 2000);
   };
 
   return (

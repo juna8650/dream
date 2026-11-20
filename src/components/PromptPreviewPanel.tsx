@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { Check, Copy, ExternalLink, FileCheck2, Pencil, RotateCcw } from 'lucide-react';
 import { CLASSROOM_LINKS } from '../data/curriculum';
+import { copyTextToClipboard } from '../utils/clipboard';
 
 interface PromptPreviewPanelProps {
   title: string;
@@ -74,19 +75,8 @@ export function PromptPreviewPanel({
   }, [editedText]);
 
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(editedText);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2200);
-    } catch {
-      const textarea = document.createElement('textarea');
-      textarea.value = editedText;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
+    const ok = await copyTextToClipboard(editedText);
+    if (ok) {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2200);
     }

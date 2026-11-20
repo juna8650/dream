@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Check, Copy, ExternalLink, QrCode, X } from 'lucide-react';
 import { CLASSROOM_LINKS, LESSON_ASSETS } from '../data/curriculum';
+import { copyTextToClipboard } from '../utils/clipboard';
 
 interface MentimeterModalProps {
   isOpen: boolean;
@@ -24,13 +25,11 @@ export function MentimeterModal({ isOpen, onClose }: MentimeterModalProps) {
   if (!isOpen) return null;
 
   const handleCopyUrl = async () => {
-    try {
-      await navigator.clipboard.writeText(CLASSROOM_LINKS.mentimeter);
-    } catch {
-      // ignore
+    const ok = await copyTextToClipboard(CLASSROOM_LINKS.mentimeter);
+    if (ok) {
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
     }
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
   };
 
   return (

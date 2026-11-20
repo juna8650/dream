@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Palette, UserRound } from 'lucide-react';
+import { ArrowRight, Palette, PartyPopper, UserRound } from 'lucide-react';
 import {
   JOB_PRESETS,
   STAGE3_EXPRESSIONS,
@@ -18,15 +18,53 @@ interface Stage3CharacterDesignProps {
   onNextStage: () => void;
 }
 
-const QUESTION_STEPS = [
-  { num: '1', title: '나의 꿈', desc: '핵심 키워드 3개 · 미래 직업 1개' },
-  { num: '2', title: '외모', desc: '성별 · 피부색 · 얼굴형 · 헤어스타일' },
-  { num: '3', title: '의상', desc: '직업에 어울리는 옷 선택' },
-  { num: '4', title: '행동·소품', desc: '자세 1개 · 핵심 소품 1~2개' },
-  { num: '5', title: '표정·분위기', desc: '표정과 느낌 1개 선택' },
-  { num: '6', title: '색상', desc: '의상 색상 · 전체 이미지 느낌' },
-  { num: '7', title: '추가 스타일', desc: '웹툰·애니·픽셀·동화책·미래SF' },
-  { num: '8', title: '완성', desc: '캐릭터 설정표 & 최종 프롬프트' },
+const QUESTION_STEPS: Array<{
+  title: string;
+  lines: string[];
+  tone: 'violet' | 'sky';
+  isCelebration?: boolean;
+}> = [
+  {
+    title: '① 나의 꿈',
+    lines: ['핵심 키워드 : 3개', '미래 직업 : 1개'],
+    tone: 'violet',
+  },
+  {
+    title: '② 외모',
+    lines: ['성별, 피부색, 얼굴형,', '헤어스타일 선택'],
+    tone: 'sky',
+  },
+  {
+    title: '③ 의상',
+    lines: ['직업에 어울리는', '의상 선택'],
+    tone: 'violet',
+  },
+  {
+    title: '④ 행동·소품',
+    lines: ['자세 1개', '소품 1~2개 선택'],
+    tone: 'sky',
+  },
+  {
+    title: '⑤ 표정·분위기',
+    lines: ['표정과 느낌 1개 선택'],
+    tone: 'sky',
+  },
+  {
+    title: '⑥ 색상',
+    lines: ['의상 색상', '전체 이미지 느낌 선택'],
+    tone: 'violet',
+  },
+  {
+    title: '완성!',
+    lines: ['캐릭터 설정과', '최종 프롬프트 완성'],
+    tone: 'sky',
+    isCelebration: true,
+  },
+  {
+    title: '다양한 스타일',
+    lines: ['웹툰, 애니메이션, 픽셀아트, 동화책, 미래 SF스타일 반영'],
+    tone: 'violet',
+  },
 ];
 
 export function Stage3CharacterDesign({
@@ -185,43 +223,30 @@ export function Stage3CharacterDesign({
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-100">
-                <label className="flex items-start gap-2.5 text-sm text-slate-800 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={state.includeExtendedStyle}
-                    onChange={(e) =>
-                      onUpdate({ includeExtendedStyle: e.target.checked })
-                    }
-                    className="mt-0.5 w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600"
-                  />
-                  <span>
-                    <strong className="font-semibold">확장형 추가 스타일 포함</strong>
-                    <span className="block text-xs text-slate-500 mt-0.5">
-                      기본형(고품질 3D 디자이너 토이 피규어) 외에 웹툰·애니메이션·픽셀아트 등 그림체 변형 프롬프트도 함께 받습니다.
-                    </span>
-                  </span>
-                </label>
-              </div>
-
               <div className="pt-4 border-t border-slate-100 space-y-3">
                 <h3 className="text-sm font-bold text-slate-900">
-                  ChatGPT가 물어볼 7단계 질문 순서 미리보기
+                  ChatGPT가 물어볼 질문 순서 미리보기
                 </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {QUESTION_STEPS.map((q) => (
                     <div
-                      key={q.num}
-                      className="bg-slate-50 border border-slate-200 rounded-lg p-3"
+                      key={q.title}
+                      className={`rounded-xl border p-3.5 ${
+                        q.tone === 'violet'
+                          ? 'bg-violet-50/80 border-violet-200'
+                          : 'bg-sky-50/80 border-sky-200'
+                      }`}
                     >
-                      <div className="text-xs font-mono tabular-nums font-semibold text-blue-700">
-                        STEP {q.num}
+                      <div className="flex items-center gap-1.5 text-sm font-bold text-blue-700">
+                        {q.isCelebration && (
+                          <PartyPopper className="w-4 h-4 text-rose-500 shrink-0" aria-hidden="true" />
+                        )}
+                        <span>{q.title}</span>
                       </div>
-                      <div className="text-sm font-semibold text-slate-900 mt-0.5">
-                        {q.title}
-                      </div>
-                      <div className="text-xs text-slate-500 mt-1 leading-snug">
-                        {q.desc}
+                      <div className="mt-2 space-y-0.5 text-xs text-slate-800 leading-snug">
+                        {q.lines.map((line) => (
+                          <p key={line}>{line}</p>
+                        ))}
                       </div>
                     </div>
                   ))}

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { JOB_FIELDS, JOB_PRESETS, WORKSHEET_CATEGORIES } from '../data/curriculum';
 import { StudentWorkspaceState } from '../types/lesson';
+import { copyTextToClipboard } from '../utils/clipboard';
 import { buildStage1Prompt } from '../utils/promptBuilders';
 import { PromptPreviewPanel } from './PromptPreviewPanel';
 
@@ -47,13 +48,11 @@ export function Stage1JobExplore({
   };
 
   const handleCopyFollowUp = async (type: 'retry' | 'detail', text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch {
-      // Fallback ignored if clipboard blocked
+    const ok = await copyTextToClipboard(text);
+    if (ok) {
+      setCopiedFollowUp(type);
+      window.setTimeout(() => setCopiedFollowUp(null), 2000);
     }
-    setCopiedFollowUp(type);
-    window.setTimeout(() => setCopiedFollowUp(null), 2000);
   };
 
   const retryPrompt =

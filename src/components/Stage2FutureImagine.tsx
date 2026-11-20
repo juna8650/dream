@@ -14,6 +14,7 @@ import {
   STAGE2_STYLES,
 } from '../data/curriculum';
 import { GenderOption, StudentWorkspaceState } from '../types/lesson';
+import { copyTextToClipboard } from '../utils/clipboard';
 import { getJobRecommendations } from '../utils/jobRecommendations';
 import { buildStage2Prompt } from '../utils/promptBuilders';
 import { PromptPreviewPanel } from './PromptPreviewPanel';
@@ -126,13 +127,11 @@ export function Stage2FutureImagine({
   ];
 
   const handleCopyFix = async (id: string, text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch {
-      // ignore
+    const ok = await copyTextToClipboard(text);
+    if (ok) {
+      setCopiedFix(id);
+      window.setTimeout(() => setCopiedFix(null), 1800);
     }
-    setCopiedFix(id);
-    window.setTimeout(() => setCopiedFix(null), 1800);
   };
 
   return (
