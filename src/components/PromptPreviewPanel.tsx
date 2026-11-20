@@ -1,5 +1,13 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { Check, Copy, ExternalLink, FileCheck2, Pencil, RotateCcw } from 'lucide-react';
+import {
+  Check,
+  Copy,
+  ExternalLink,
+  FileCheck2,
+  ImagePlus,
+  Pencil,
+  RotateCcw,
+} from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { CLASSROOM_LINKS } from '../data/curriculum';
 import { copyTextToClipboard } from '../utils/clipboard';
@@ -113,8 +121,18 @@ export function PromptPreviewPanel({
         </div>
 
         {reminderBanner && (
-          <div className="bg-amber-400/15 border border-amber-300/35 text-amber-100 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm leading-relaxed">
-            {reminderBanner}
+          <div className="flex items-start gap-3 bg-gradient-to-r from-amber-400/25 via-orange-400/20 to-amber-400/15 border border-amber-300/80 text-amber-50 rounded-xl px-3.5 py-3 shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-amber-300 text-slate-950 flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+              <ImagePlus className="w-4 h-4 stroke-[2.25]" aria-hidden="true" />
+            </div>
+            <div className="min-w-0">
+              <span className="block text-[11px] font-bold uppercase tracking-wider text-amber-300 mb-0.5">
+                {lang === 'en' ? 'Important Step' : '필수 확인'}
+              </span>
+              <p className="text-xs sm:text-sm font-semibold text-white leading-snug">
+                {reminderBanner}
+              </p>
+            </div>
           </div>
         )}
 

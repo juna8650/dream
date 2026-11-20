@@ -504,8 +504,13 @@ export function Stage4ProfileCard({
             }
             subtitle={
               lang === 'en'
+                ? 'Paste into ChatGPT to generate your vertical A4 profile card.'
+                : 'ChatGPT에 붙여넣어 세로형 A4 미래 프로필 카드를 완성하세요.'
+            }
+            reminderBanner={
+              lang === 'en'
                 ? 'Upload your Step 3 character to ChatGPT first, then paste this prompt.'
-                : '3단계 캐릭터를 ChatGPT에 먼저 올린 뒤 입력한 프롬프트를 붙여넣으세요.'
+                : '3단계 캐릭터를 ChatGPT에 업로드하고 입력한 프롬프트를 붙여넣으세요.'
             }
             promptText={promptText}
             copyLabel={
